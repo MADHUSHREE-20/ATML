@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Attendance Management System</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div id="login-container" class="active">
+            <h2>Login</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="role">Role</label>
+                    <select id="role" name="role" required>
+                        <option value="teacher">Teacher</option>
+                        <option value="student">Student</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+            <p id="login-message"></p>
+        </div>
+
+        <!-- Teacher Dashboard -->
+        <div id="teacher-dashboard" class="dashboard hidden">
+            <header>
+                <h2>Teacher Dashboard</h2>
+                <button id="teacher-logout" class="btn-logout">Logout</button>
+            </header>
+            <nav class="sidebar">
+                <ul>
+                    <li><a href="#" class="active" data-tab="mark-attendance">Mark Attendance</a></li>
+                    <li><a href="#" data-tab="view-attendance">View Attendance</a></li>
+                    <li><a href="#" data-tab="generate-reports">Generate Reports</a></li>
+                </ul>
+            </nav>
+            <main class="content">
+                <section id="mark-attendance" class="active">
+                    <h3>Mark Attendance</h3>
+                    <div class="form-group">
+                        <label for="class-select">Select Class</label>
+                        <select id="class-select">
+                            <option value="">Select a class</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="attendance-date">Date</label>
+                        <input type="date" id="attendance-date" value="">
+                    </div>
+                    <table id="attendance-table" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Roll No</th>
+                                <th>Student Name</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Student list will be populated here -->
+                        </tbody>
+                    </table>
+                    <button id="save-attendance" class="btn">Save Attendance</button>
+                    <p id="attendance-message"></p>
+                </section>
+
+                <section id="view-attendance">
+                    <h3>View Attendance</h3>
+                    <div class="filters">
+                        <div class="form-group">
+                            <label for="view-class-select">Class</label>
+                            <select id="view-class-select">
+                                <option value="">Select a class</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="from-date">From Date</label>
+                            <input type="date" id="from-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="to-date">To Date</label>
+                            <input type="date" id="to-date">
+                        </div>
+                        <button id="fetch-attendance" class="btn">Fetch Records</button>
+                    </div>
+                    <div class="attendance-records">
+                        <!-- Attendance records will be displayed here -->
+                    </div>
+                </section>
+
+                <section id="generate-reports">
+                    <h3>Generate Reports</h3>
+                    <div class="filters">
+                        <div class="form-group">
+                            <label for="report-class-select">Class</label>
+                            <select id="report-class-select">
+                                <option value="">Select a class</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="report-from-date">From Date</label>
+                            <input type="date" id="report-from-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="report-to-date">To Date</label>
+                            <input type="date" id="report-to-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="report-type">Report Type</label>
+                            <select id="report-type">
+                                <option value="summary">Summary Report</option>
+                                <option value="detailed">Detailed Report</option>
+                            </select>
+                        </div>
+                        <button id="generate-report" class="btn">Generate Report</button>
+                    </div>
+                    <div class="report-container">
+                        <!-- Report will be displayed here -->
+                    </div>
+                    <div class="export-options">
+                        <button id="export-pdf" class="btn btn-small">Export as PDF</button>
+                        <button id="export-excel" class="btn btn-small">Export as Excel</button>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- Student Dashboard -->
+        <div id="student-dashboard" class="dashboard hidden">
+            <header>
+                <h2>Student Dashboard</h2>
+                <button id="student-logout" class="btn-logout">Logout</button>
+            </header>
+            <main class="content">
+                <section id="student-attendance">
+                    <h3>My Attendance</h3>
+                    <div class="student-info">
+                        <p><strong>Name:</strong> <span id="student-name"></span></p>
+                        <p><strong>Roll No:</strong> <span id="student-roll"></span></p>
+                        <p><strong>Class:</strong> <span id="student-class"></span></p>
+                    </div>
+                    <div class="filters">
+                        <div class="form-group">
+                            <label for="student-from-date">From Date</label>
+                            <input type="date" id="student-from-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="student-to-date">To Date</label>
+                            <input type="date" id="student-to-date">
+                        </div>
+                        <button id="fetch-student-attendance" class="btn">Fetch Records</button>
+                    </div>
+                    <div class="attendance-summary">
+                        <div class="stat-card">
+                            <h4>Present</h4>
+                            <p id="present-count">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Absent</h4>
+                            <p id="absent-count">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Percentage</h4>
+                            <p id="attendance-percentage">0%</p>
+                        </div>
+                    </div>
+                    <div class="student-attendance-records">
+                        <!-- Student attendance records will be displayed here -->
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div id="admin-dashboard" class="dashboard hidden">
+            <header>
+                <h2>Admin Dashboard</h2>
+                <button id="admin-logout" class="btn-logout">Logout</button>
+            </header>
+            <nav class="sidebar">
+                <ul>
+                    <li><a href="#" class="active" data-tab="manage-teachers">Manage Teachers</a></li>
+                    <li><a href="#" data-tab="manage-students">Manage Students</a></li>
+                    <li><a href="#" data-tab="manage-classes">Manage Classes</a></li>
+                </ul>
+            </nav>
+            <main class="content">
+                <section id="manage-teachers" class="active">
+                    <h3>Manage Teachers</h3>
+                    <button id="add-teacher-btn" class="btn">Add New Teacher</button>
+                    <table id="teachers-table" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Teachers list will be populated here -->
+                        </tbody>
+                    </table>
+
+                    <!-- Add/Edit Teacher Modal -->
+                    <div id="teacher-modal" class="modal">
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <h3 id="teacher-modal-title">Add New Teacher</h3>
+                            <form id="teacher-form">
+                                <input type="hidden" id="teacher-id">
+                                <div class="form-group">
+                                    <label for="teacher-name">Name</label>
+                                    <input type="text" id="teacher-name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="teacher-email">Email</label>
+                                    <input type="email" id="teacher-email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="teacher-username">Username</label>
+                                    <input type="text" id="teacher-username" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="teacher-password">Password</label>
+                                    <input type="password" id="teacher-password">
+                                    <small>(Leave blank to keep current password when editing)</small>
+                                </div>
+                                <button type="submit" class="btn">Save</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="manage-students">
+                    <h3>Manage Students</h3>
+                    <button id="add-student-btn" class="btn">Add New Student</button>
+                    <div class="filters">
+                        <div class="form-group">
+                            <label for="filter-class">Filter by Class</label>
+                            <select id="filter-class">
+                                <option value="">All Classes</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table id="students-table" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Roll No</th>
+                                <th>Name</th>
+                                <th>Class</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Students list will be populated here -->
+                        </tbody>
+                    </table>
+
+                    <!-- Add/Edit Student Modal -->
+                    <div id="student-modal" class="modal">
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <h3 id="student-modal-title">Add New Student</h3>
+                            <form id="student-form">
+                                <input type="hidden" id="student-id">
+                                <div class="form-group">
+                                    <label for="student-roll-no">Roll No</label>
+                                    <input type="text" id="student-roll-no" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="edit-student-name">Name</label>
+                                    <input type="text" id="edit-student-name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="student-class">Class</label>
+                                    <select id="student-class" required>
+                                        <option value="">Select a class</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="student-username">Username</label>
+                                    <input type="text" id="student-username" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="student-password">Password</label>
+                                    <input type="password" id="student-password">
+                                    <small>(Leave blank to keep current password when editing)</small>
+                                </div>
+                                <button type="submit" class="btn">Save</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="manage-classes">
+                    <h3>Manage Classes</h3>
+                    <button id="add-class-btn" class="btn">Add New Class</button>
+                    <table id="classes-table" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Class Name</th>
+                                <th>Students Count</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Classes list will be populated here -->
+                        </tbody>
+                    </table>
+
+                    <!-- Add/Edit Class Modal -->
+                    <div id="class-modal" class="modal">
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <h3 id="class-modal-title">Add New Class</h3>
+                            <form id="class-form">
+                                <input type="hidden" id="class-id">
+                                <div class="form-group">
+                                    <label for="class-name">Class Name</label>
+                                    <input type="text" id="class-name" required>
+                                </div>
+                                <button type="submit" class="btn">Save</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
